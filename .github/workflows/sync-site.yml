@@ -26,6 +26,17 @@ jobs:
               p.parent.mkdir(parents=True, exist_ok=True)
               subprocess.run(["curl","-fsSL",os.environ["SOURCE"]+u,"-o",str(p)],check=True)
           PY
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text()
+          logo='<svg aria-hidden="true" viewBox="0 0 64 64" style="width:32px;height:32px;display:block"><path fill="#242528" fill-rule="evenodd" d="M32 3a29 29 0 1 0 29 29A29 29 0 0 0 32 3Zm0 12a17 17 0 1 1-17 17 17 17 0 0 1 17-17Z"/><path fill="#737477" d="M32 3a29 29 0 0 1 27.3 19.2l-11.4 3.9A17 17 0 0 0 32 15Z"/><path fill="#b2b2b3" d="m32 3 9 13.6-9-1.6Z"/></svg>'
+          import re
+          s,n=re.subn(r'<span class="brand-mark"><img[^>]*></span>|<img src="/(?:logo-mark\.svg|brand-mark\.png)"[^>]*>|<svg aria-hidden="true" viewBox="0 0 64 64".*?</svg>',logo,s,count=1)
+          if not n:
+              raise SystemExit("Could not find header logo slot")
+          p.write_text(s)
+          PY
           printf '%s\n' 'shuorenhua.online' > CNAME
           touch .nojekyll
       - name: Commit synchronized files
