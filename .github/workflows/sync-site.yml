@@ -20,22 +20,38 @@ jobs:
           import re, subprocess, os
           from pathlib import Path
           html=Path("index.html").read_text()
-          urls=sorted(set(re.findall(r'(?:href|src)="(/(?:_next/[^"? ]+|logo-mark\.svg|favicon\.svg))', html)))
+          urls=sorted(set(re.findall(r'(?:href|src)="/((?:_next/[^"? ]+)|(?:logo-mark\.svg)|(?:favicon\.svg))', html)))
           for u in urls:
-              p=Path(u.lstrip("/"))
+              p=Path(u)
               p.parent.mkdir(parents=True, exist_ok=True)
-              subprocess.run(["curl","-fsSL",os.environ["SOURCE"]+u,"-o",str(p)],check=True)
+              subprocess.run(["curl","-fsSL",os.environ["SOURCE"]+"/"+u,"-o",str(p)],check=True)
           PY
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path("index.html")
           s=p.read_text()
-          import re
           s=re.sub(r'<span class="brand-mark"><img[^>]*></span>|<img src="/(?:logo-mark\.svg|brand-mark\.png)"[^>]*>|<svg aria-hidden="true" viewBox="0 0 64 64".*?</svg>', '', s, count=1)
           style='<style id="pages-brand-mark">.brand::before{content:"";display:block;box-sizing:border-box;width:32px;height:32px;flex:0 0 32px;border:6px solid #242528;border-right-color:#737477;border-bottom-color:#b2b2b3;border-radius:50%}.brand .brand-mark,.brand>img,.brand>svg{display:none!important}@media(max-width:600px){.brand::before{width:29px;height:29px;flex-basis:29px}}</style>'
           if 'id="pages-brand-mark"' not in s:
               s=s.replace("</head>",style+"</head>",1)
           p.write_text(s)
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          api="https://api.shuorenhua.online/api/transform"
+          candidates=list(Path("_next/static/chunks").glob("page-*.js"))
+          changed=[]
+          for p in candidates:
+              s=p.read_text()
+              new=re.sub(r'fetch\((["\x60])/api/transform\1', lambda m: "fetch("+m.group(1)+api+m.group(1), s)
+              if new != s:
+                  p.write_text(new)
+                  changed.append(str(p))
+          if len(changed) != 1:
+              raise SystemExit(f"Expected exactly one page bundle with /api/transform, found {changed}")
+          print(f"Patched transform endpoint in {changed[0]}")
           PY
           printf '%s\n' 'shuorenhua.online' > CNAME
           touch .nojekyll
