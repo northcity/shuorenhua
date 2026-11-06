@@ -32,6 +32,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html CNAME .nojekyll _next logo-mark.svg favicon.svg
+          git add index.html CNAME .nojekyll _next logo-mark.svg brand-mark.png favicon.svg
           git diff --cached --quiet || git commit -m "Sync published GPT Site"
           git push
