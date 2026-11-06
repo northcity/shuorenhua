@@ -30,7 +30,7 @@ jobs:
           from pathlib import Path
           p=Path("index.html")
           s=p.read_text()
-          logo='<span aria-hidden="true" style="display:inline-block;box-sizing:border-box;width:32px;height:32px;border:6px solid #242528;border-right-color:#737477;border-bottom-color:#b2b2b3;border-radius:50%;vertical-align:middle;flex:none"></span>'
+          logo='<span aria-hidden="true" style="display:inline-block;width:32px;height:32px;color:#242528;font:32px/28px Arial,sans-serif;text-align:center;vertical-align:middle;flex:none">◯</span>'
           import re
           s,n=re.subn(r'<span class="brand-mark"><img[^>]*></span>|<img src="/(?:logo-mark\.svg|brand-mark\.png)"[^>]*>|<svg aria-hidden="true" viewBox="0 0 64 64".*?</svg>',logo,s,count=1)
           if not n:
