@@ -15,7 +15,7 @@ jobs:
           SOURCE: https://shuorenhua-beicheng.beicbeichbeichengbeicheng.chatgpt.site
         run: |
           set -euo pipefail
-          curl -fsSL "$SOURCE/" -o index.html
+          curl -fsSL -H "Accept: text/html" "$SOURCE/?sync=1" -o index.html
           python3 - <<'PY'
           import re, subprocess, os
           from pathlib import Path
